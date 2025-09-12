@@ -72,7 +72,8 @@ const queryClient = new QueryClient()
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ErrorBoundary>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <ErrorBoundary>
       <Toaster />
       <Sonner />
       <BrowserRouter>
@@ -1286,6 +1287,7 @@ const App = () => (
       <Sonner />
       <NotificationBell />
     </ErrorBoundary>
+    </ThemeProvider>
   </QueryClientProvider>
 )
 
