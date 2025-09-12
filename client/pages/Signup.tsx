@@ -487,7 +487,17 @@ export default function Signup() {
                       {showOwnerPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
-                  <p className="text-xs text-gray-500">Must be 8+ characters with uppercase, lowercase, and number</p>
+                  <div className="mt-2">
+                    <div className="h-1.5 w-full bg-gray-200 rounded">
+                      <div className={`h-1.5 rounded transition-all ${strengthColor(passwordStrength(step2Data.ownerPassword))}`}
+                           style={{ width: `${(passwordStrength(step2Data.ownerPassword) / 4) * 100}%` }} />
+                    </div>
+                    <div className="flex justify-between text-xs mt-1 text-gray-500">
+                      <span>Password strength</span>
+                      <span className="font-medium">{strengthLabel(passwordStrength(step2Data.ownerPassword))}</span>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">Must be 8+ characters with uppercase, lowercase, and number</p>
                   {validationErrors.ownerPassword && (
                     <p className="text-sm text-red-500">{validationErrors.ownerPassword}</p>
                   )}
@@ -527,7 +537,17 @@ export default function Signup() {
                       {showStaffPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
-                  <p className="text-xs text-gray-500">Staff will use this password with the business code to join</p>
+                  <div className="mt-2">
+                    <div className="h-1.5 w-full bg-gray-200 rounded">
+                      <div className={`h-1.5 rounded transition-all ${strengthColor(passwordStrength(step2Data.staffPassword))}`}
+                           style={{ width: `${(passwordStrength(step2Data.staffPassword) / 4) * 100}%` }} />
+                    </div>
+                    <div className="flex justify-between text-xs mt-1 text-gray-500">
+                      <span>Password strength</span>
+                      <span className="font-medium">{strengthLabel(passwordStrength(step2Data.staffPassword))}</span>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">Staff will use this password with the business code to join</p>
                   {validationErrors.staffPassword && (
                     <p className="text-sm text-red-500">{validationErrors.staffPassword}</p>
                   )}
