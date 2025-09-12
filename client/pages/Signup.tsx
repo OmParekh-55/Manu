@@ -88,6 +88,19 @@ export default function Signup() {
   const [error, setError] = useState("")
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({})
 
+  const passwordStrength = (pwd: string) => {
+    let score = 0
+    if (pwd.length >= 8) score++
+    if (/[A-Z]/.test(pwd)) score++
+    if (/[a-z]/.test(pwd)) score++
+    if (/[0-9]/.test(pwd)) score++
+    if (/[^A-Za-z0-9]/.test(pwd)) score++
+    return Math.min(score, 4) // 0..4
+  }
+
+  const strengthLabel = (score: number) => ["Very weak","Weak","Good","Strong","Very strong"][score] || "Very weak"
+  const strengthColor = (score: number) => ["bg-red-500","bg-orange-500","bg-yellow-500","bg-green-500","bg-emerald-600"][score] || "bg-red-500"
+
   const validateStep1 = (): boolean => {
     const errors: Record<string, string> = {}
 
