@@ -72,6 +72,9 @@ interface ValuationData {
   averageValuation: number;
 }
 
+import { PremiumGate } from '@/components/PremiumGate'
+import { planService } from '@/lib/plan-service'
+
 const AdvancedAnalytics: React.FC = () => {
   const { hasPermission, userRole } = usePermissions();
   const [selectedPeriod, setSelectedPeriod] = useState('last_12_months');
