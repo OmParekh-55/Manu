@@ -79,7 +79,11 @@ export default function SettingsPage() {
               Settings Saved
             </Badge>
           )}
-          <Button 
+          <span className="hidden md:inline-flex">
+            {/* Owner-only: Upgrade CTA is handled by component visibility */}
+            <UpgradeButton />
+          </span>
+          <Button
             onClick={handleSave}
             disabled={isSaving}
             className="bg-blue-600 hover:bg-blue-700"
