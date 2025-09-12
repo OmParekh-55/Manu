@@ -26,6 +26,7 @@ import {
 import { usePermissions } from '@/lib/permissions';
 import WhatsAppConfig from '@/components/WhatsAppConfig';
 import BackButton from '@/components/BackButton';
+import UpgradeButton from '@/components/UpgradeButton';
 
 export default function SettingsPage() {
   const permissions = usePermissions();
