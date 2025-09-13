@@ -368,6 +368,14 @@ const App = () => (
             }
           />
           <Route
+            path="/dashboard/staff/attendance"
+            element={
+              <ProtectedRoute requiredPermission="hrAndStaffAttendance">
+                <StaffAttendance />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/dashboard/staff/requests"
             element={
               <ProtectedRoute ownerOnly={true}>
