@@ -35,6 +35,8 @@ import { dataManager, BusinessMetrics } from '@/lib/data-manager';
 import { useBranchContext } from '@/lib/use-branch-context';
 import BranchSwitcher from '@/components/BranchSwitcher';
 import NotificationsInbox from '@/components/NotificationsInbox';
+import { planService } from '@/lib/plan-service';
+import { PremiumBadge } from '@/components/PremiumGate';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -48,6 +50,7 @@ export default function Dashboard() {
 
   const permissions = usePermissions();
   const { canSwitchBranches } = useBranchContext();
+  const isPremium = planService.isPremiumUser();
 
   // Initialize global shortcuts
   useGlobalShortcuts();
@@ -277,30 +280,39 @@ export default function Dashboard() {
 
                   {permissions.hasPermission('performanceDashboard') && (
                     <Link
-                      to="/dashboard/staff/leaderboard"
-                      className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors group"
-                    >
-                      <Trophy className="w-5 h-5" />
-                      <span className="text-sm font-medium">Staff Leaderboard</span>
-                      <ChevronRight className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </Link>
+                    to={isPremium ? "/dashboard/staff/leaderboard" : "/upgrade-to-premium"}
+                    className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors group"
+                  >
+                    <Trophy className="w-5 h-5" />
+                    <span className="text-sm font-medium flex items-center gap-2">
+                      Staff Leaderboard
+                      {!isPremium && <PremiumBadge />}
+                    </span>
+                    <ChevronRight className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </Link>
                   )}
 
                   <Link
-                    to="/dashboard/tasks/assignment"
+                    to={isPremium ? "/dashboard/tasks/assignment" : "/upgrade-to-premium"}
                     className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors group"
                   >
                     <UserCheck className="w-5 h-5" />
-                    <span className="text-sm font-medium">Task Assignment</span>
+                    <span className="text-sm font-medium flex items-center gap-2">
+                      Task Assignment
+                      {!isPremium && <PremiumBadge />}
+                    </span>
                     <ChevronRight className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
 
                   <Link
-                    to="/dashboard/staff/support"
+                    to={isPremium ? "/dashboard/staff/support" : "/upgrade-to-premium"}
                     className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors group"
                   >
                     <HelpCircle className="w-5 h-5" />
-                    <span className="text-sm font-medium">Support Tickets</span>
+                    <span className="text-sm font-medium flex items-center gap-2">
+                      Support Tickets
+                      {!isPremium && <PremiumBadge />}
+                    </span>
                     <ChevronRight className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
 
