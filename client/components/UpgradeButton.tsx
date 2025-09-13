@@ -67,3 +67,5 @@ export const UpgradePromptButton: React.FC<UpgradePromptButtonProps> = ({ featur
     </Button>
   )
 }
+
+export default UpgradeButton

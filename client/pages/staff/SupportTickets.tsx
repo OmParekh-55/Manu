@@ -12,6 +12,8 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { authService } from '@/lib/auth-service';
 import { staffService } from '@/lib/staff-service';
+import { PremiumGate } from '@/components/PremiumGate';
+import { planService } from '@/lib/plan-service';
 
 interface SupportTicket {
   id: string;
@@ -71,6 +73,20 @@ export default function SupportTickets() {
 
   const user = authService.getCurrentUser();
   const canManageTickets = authService.hasPermission('manage_team');
+
+  // Plan gating
+  const supportAvailable = planService.isFeatureAvailable('support-tickets');
+  if (!supportAvailable) {
+    return (
+      <div className="p-6">
+        <PremiumGate
+          featureId="support-tickets"
+          featureName="Support Ticket System"
+          description="Staff can raise tickets (HR, IT, general), and admins can assign and resolve in Premium."
+        />
+      </div>
+    );
+  }
 
   useEffect(() => {
     loadTickets();

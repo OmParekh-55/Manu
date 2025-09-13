@@ -26,6 +26,7 @@ import {
 import { usePermissions } from '@/lib/permissions';
 import WhatsAppConfig from '@/components/WhatsAppConfig';
 import BackButton from '@/components/BackButton';
+import UpgradeButton from '@/components/UpgradeButton';
 
 export default function SettingsPage() {
   const permissions = usePermissions();
@@ -79,7 +80,11 @@ export default function SettingsPage() {
               Settings Saved
             </Badge>
           )}
-          <Button 
+          <span className="hidden md:inline-flex">
+            {/* Owner-only: Upgrade CTA */}
+            {permissions.isOwner && <UpgradeButton />}
+          </span>
+          <Button
             onClick={handleSave}
             disabled={isSaving}
             className="bg-blue-600 hover:bg-blue-700"

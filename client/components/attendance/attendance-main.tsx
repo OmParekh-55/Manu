@@ -7,10 +7,13 @@ import { GeoFenceSetup } from "./geo-fence-setup"
 import { ShiftManagement } from "./shift-management"
 import { AttendanceAnalytics } from "./attendance-analytics"
 import { useAuth } from "@/hooks/use-auth"
+import { PremiumGate } from "@/components/PremiumGate"
+import { planService } from "@/lib/plan-service"
 
 export function AttendanceMain() {
   const { user } = useAuth()
   const isOwnerOrManager = user?.role === "owner" || user?.role === "co_founder" || user?.role === "manager"
+  const hasAdvanced = planService.isFeatureAvailable("advanced-attendance")
 
   return (
     <div className="space-y-6">
@@ -38,15 +41,36 @@ export function AttendanceMain() {
         {isOwnerOrManager && (
           <>
             <TabsContent value="analytics">
-              <AttendanceAnalytics />
+              <PremiumGate
+                featureId="advanced-attendance"
+                featureName="Advanced Attendance Analytics"
+                description="Unlock geo-fencing, late/OT insights, trendlines and exports with Premium."
+                showPreview={!hasAdvanced}
+              >
+                <AttendanceAnalytics />
+              </PremiumGate>
             </TabsContent>
 
             <TabsContent value="shifts">
-              <ShiftManagement />
+              <PremiumGate
+                featureId="advanced-attendance"
+                featureName="Shift & Break Management"
+                description="Define shifts, breaks, lateness and OT rules in Premium."
+                showPreview={!hasAdvanced}
+              >
+                <ShiftManagement />
+              </PremiumGate>
             </TabsContent>
 
             <TabsContent value="settings">
-              <GeoFenceSetup />
+              <PremiumGate
+                featureId="advanced-attendance"
+                featureName="Geo-fencing & Face Verification"
+                description="Restrict check-ins by location and enable photo verification in Premium."
+                showPreview={!hasAdvanced}
+              >
+                <GeoFenceSetup />
+              </PremiumGate>
             </TabsContent>
           </>
         )}

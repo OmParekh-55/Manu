@@ -122,6 +122,29 @@
     @apply sticky top-4 z-40 bg-white shadow-lg border rounded-lg;
   }
 
+  .card-surface {
+    @apply bg-white border rounded-xl shadow-sm hover:shadow-md transition-shadow;
+  }
+
+  .table-enhanced {
+    @apply w-full border border-gray-200 rounded-lg overflow-hidden;
+  }
+  .table-enhanced thead {
+    @apply bg-gray-50 text-gray-600 text-xs uppercase tracking-wide;
+  }
+  .table-enhanced th, .table-enhanced td {
+    @apply px-4 py-2 align-middle;
+  }
+  .table-enhanced tbody tr:nth-child(odd) {
+    @apply bg-white;
+  }
+  .table-enhanced tbody tr:nth-child(even) {
+    @apply bg-gray-50;
+  }
+  .table-enhanced tbody tr:hover {
+    @apply bg-blue-50/50;
+  }
+
   .context-menu {
     @apply fixed bg-white border rounded-lg shadow-lg z-50 py-2 min-w-40;
   }

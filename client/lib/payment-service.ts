@@ -17,7 +17,7 @@ export interface PaymentResult {
 
 class PaymentService {
   private readonly config: PaymentConfig = {
-    razorpayKeyId: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_mock_key",
+    razorpayKeyId: (import.meta as any).env?.VITE_RAZORPAY_KEY_ID || "rzp_test_mock_key",
     premiumPlanPrice: 99900, // ₹999 in paise
     currency: "INR",
   }

@@ -12,6 +12,8 @@ import { useToast } from '@/hooks/use-toast';
 import { usePermissions } from '@/lib/permissions';
 import { authService } from '@/lib/auth-service';
 import BackButton from '@/components/BackButton';
+import { PremiumGate } from '@/components/PremiumGate';
+import { planService } from '@/lib/plan-service';
 import { 
   FileText, 
   Plus, 
@@ -130,7 +132,21 @@ const DocumentVault: React.FC = () => {
   const { hasPermission } = usePermissions();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
+
+  // Plan gating
+  const documentationAvailable = planService.isFeatureAvailable('documentation');
+  if (!documentationAvailable) {
+    return (
+      <div className="p-6">
+        <PremiumGate
+          featureId="documentation"
+          featureName="Documentation Center"
+          description="Upload/share SOPs, training guides, and policies with role-based access in Premium."
+        />
+      </div>
+    );
+  }
+
   // State management
   const [documents, setDocuments] = useState<BusinessDocument[]>([]);
   const [folders, setFolders] = useState<DocumentFolder[]>([]);

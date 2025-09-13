@@ -15,6 +15,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { taskService, TaskAssignment, CreateTaskData } from '@/lib/task-service';
 import { staffService, StaffMember } from '@/lib/staff-service';
 import { authService } from '@/lib/auth-service';
+import { PremiumGate } from '@/components/PremiumGate';
+import { planService } from '@/lib/plan-service';
 
 export default function TaskAssignment() {
   const [tasks, setTasks] = useState<TaskAssignment[]>([]);
@@ -45,6 +47,20 @@ export default function TaskAssignment() {
 
   const user = authService.getCurrentUser();
   const canAssignTasks = authService.hasPermission('assignTasksOrRoutes');
+
+  // Plan gating
+  const tasksAvailable = planService.isFeatureAvailable('task-allotment');
+  if (!tasksAvailable) {
+    return (
+      <div className="p-6">
+        <PremiumGate
+          featureId="task-allotment"
+          featureName="Task Allotment"
+          description="Create, assign, and track tasks with deadlines and status updates in Premium."
+        />
+      </div>
+    );
+  }
 
   useEffect(() => {
     loadTasks();

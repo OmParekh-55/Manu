@@ -38,6 +38,28 @@ class NotificationService {
     this.listeners.forEach((listener) => listener(this.notifications))
   }
 
+  // Server-backed notifications API
+  async getNotifications(_businessId?: string): Promise<BusinessNotification[]> {
+    const res = await fetch('/api/notifications')
+    if (!res.ok) throw new Error(`Failed to fetch notifications: ${res.status}`)
+    const data = await res.json()
+    return data as BusinessNotification[]
+  }
+
+  async markAsRead(id: string): Promise<void> {
+    const res = await fetch(`/api/notifications/${encodeURIComponent(id)}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ read: true }),
+    })
+    if (!res.ok) throw new Error(`Failed to mark as read: ${res.status}`)
+  }
+
+  async markAllAsRead(): Promise<void> {
+    const res = await fetch('/api/notifications/mark-all-read', { method: 'POST' })
+    if (!res.ok) throw new Error(`Failed to mark all as read: ${res.status}`)
+  }
+
   show(notification: Omit<Notification, "id">) {
     const id = Date.now().toString()
     const newNotification: Notification = {

@@ -88,6 +88,19 @@ export default function Signup() {
   const [error, setError] = useState("")
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({})
 
+  const passwordStrength = (pwd: string) => {
+    let score = 0
+    if (pwd.length >= 8) score++
+    if (/[A-Z]/.test(pwd)) score++
+    if (/[a-z]/.test(pwd)) score++
+    if (/[0-9]/.test(pwd)) score++
+    if (/[^A-Za-z0-9]/.test(pwd)) score++
+    return Math.min(score, 4) // 0..4
+  }
+
+  const strengthLabel = (score: number) => ["Very weak","Weak","Good","Strong","Very strong"][score] || "Very weak"
+  const strengthColor = (score: number) => ["bg-red-500","bg-orange-500","bg-yellow-500","bg-green-500","bg-emerald-600"][score] || "bg-red-500"
+
   const validateStep1 = (): boolean => {
     const errors: Record<string, string> = {}
 
@@ -474,7 +487,17 @@ export default function Signup() {
                       {showOwnerPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
-                  <p className="text-xs text-gray-500">Must be 8+ characters with uppercase, lowercase, and number</p>
+                  <div className="mt-2">
+                    <div className="h-1.5 w-full bg-gray-200 rounded">
+                      <div className={`h-1.5 rounded transition-all ${strengthColor(passwordStrength(step2Data.ownerPassword))}`}
+                           style={{ width: `${(passwordStrength(step2Data.ownerPassword) / 4) * 100}%` }} />
+                    </div>
+                    <div className="flex justify-between text-xs mt-1 text-gray-500">
+                      <span>Password strength</span>
+                      <span className="font-medium">{strengthLabel(passwordStrength(step2Data.ownerPassword))}</span>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">Must be 8+ characters with uppercase, lowercase, and number</p>
                   {validationErrors.ownerPassword && (
                     <p className="text-sm text-red-500">{validationErrors.ownerPassword}</p>
                   )}
@@ -514,7 +537,17 @@ export default function Signup() {
                       {showStaffPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
-                  <p className="text-xs text-gray-500">Staff will use this password with the business code to join</p>
+                  <div className="mt-2">
+                    <div className="h-1.5 w-full bg-gray-200 rounded">
+                      <div className={`h-1.5 rounded transition-all ${strengthColor(passwordStrength(step2Data.staffPassword))}`}
+                           style={{ width: `${(passwordStrength(step2Data.staffPassword) / 4) * 100}%` }} />
+                    </div>
+                    <div className="flex justify-between text-xs mt-1 text-gray-500">
+                      <span>Password strength</span>
+                      <span className="font-medium">{strengthLabel(passwordStrength(step2Data.staffPassword))}</span>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">Staff will use this password with the business code to join</p>
                   {validationErrors.staffPassword && (
                     <p className="text-sm text-red-500">{validationErrors.staffPassword}</p>
                   )}

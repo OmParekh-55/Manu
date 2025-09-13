@@ -14,6 +14,7 @@ import AdvancedAnalytics from "./pages/dashboard/AdvancedAnalytics"
 import AIAssistant from "./pages/dashboard/AIAssistant"
 import Settings from "./pages/dashboard/Settings"
 import ProtectedRoute from "./components/ProtectedRoute"
+import { ThemeProvider } from "next-themes"
 // Business-specific components
 import CustomerDatabase from "./pages/business/retailer/CustomerDatabase"
 import ProductCatalog from "./pages/business/ecommerce/ProductCatalog"
@@ -72,7 +73,8 @@ const queryClient = new QueryClient()
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ErrorBoundary>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <ErrorBoundary>
       <Toaster />
       <Sonner />
       <BrowserRouter>
@@ -1286,6 +1288,7 @@ const App = () => (
       <Sonner />
       <NotificationBell />
     </ErrorBoundary>
+    </ThemeProvider>
   </QueryClientProvider>
 )
 
