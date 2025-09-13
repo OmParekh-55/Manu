@@ -81,8 +81,8 @@ export default function SettingsPage() {
             </Badge>
           )}
           <span className="hidden md:inline-flex">
-            {/* Owner-only: Upgrade CTA is handled by component visibility */}
-            <UpgradeButton />
+            {/* Owner-only: Upgrade CTA */}
+            {permissions.isOwner && <UpgradeButton />}
           </span>
           <Button
             onClick={handleSave}
