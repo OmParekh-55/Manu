@@ -73,7 +73,6 @@ interface ValuationData {
 }
 
 import { PremiumGate } from '@/components/PremiumGate'
-import { planService } from '@/lib/plan-service'
 
 const AdvancedAnalytics: React.FC = () => {
   const { hasPermission, userRole } = usePermissions();
@@ -298,7 +297,13 @@ const AdvancedAnalytics: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <PremiumGate
+      featureId="advanced-analytics"
+      featureName="Advanced Analytics"
+      description="Gross Profit, Net Profit, EBITDA, PAT, leaderboards, trendlines and export are available in Premium."
+      showPreview={false}
+    >
+      <div className="space-y-6">
       {/* Header */}
       <Card>
         <CardHeader>
@@ -835,6 +840,7 @@ const AdvancedAnalytics: React.FC = () => {
         </TabsContent>
       </Tabs>
     </div>
+    </PremiumGate>
   );
 };
 
