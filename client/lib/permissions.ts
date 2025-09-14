@@ -187,7 +187,7 @@ export const getRoleName = (role: UserRole): string => {
 // Get business type display name
 export const getBusinessTypeName = (type: BusinessType): string => {
   const typeNames: Record<BusinessType, string> = {
-    retailer: 'Retail Store',
+    retailer: 'Shop Owner',
     ecommerce: 'E-commerce',
     manufacturer: 'Manufacturing',
     wholesaler: 'Wholesale Distribution',
