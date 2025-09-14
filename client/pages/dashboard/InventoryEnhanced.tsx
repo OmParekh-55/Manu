@@ -35,8 +35,7 @@ import {
   Check,
   Undo2,
   FileText,
-  Tag,
-  Mic
+  Tag
 } from 'lucide-react';
 import { usePermissions } from '@/lib/permissions';
 import { inventoryService } from '@/lib/inventory-service';
@@ -47,8 +46,6 @@ import { usePageShortcuts } from '@/hooks/use-keyboard-shortcuts';
 import { useBulkSelection } from '@/hooks/use-bulk-selection';
 import { SmartImportButton } from '@/components/import/SmartImportButton';
 import SmartImportModal from '@/components/import/SmartImportModal';
-import SpeechAddPanel from '@/components/speech/SpeechAddPanel';
-import SpeechReviewModal from '@/components/speech/SpeechReviewModal';
 import AddProductForm from '@/components/forms/AddProductForm';
 import AddRawMaterialForm from '@/components/forms/AddRawMaterialForm';
 import { rawMaterialRepository } from '@/services/indexeddb/repositories/rawMaterialRepository';
@@ -171,12 +168,9 @@ export default function InventoryEnhanced() {
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; product: Product } | null>(null);
   const [showImport, setShowImport] = useState(false);
   const [importSource, setImportSource] = useState<'image'|'file'>('file');
-  const [showSpeech, setShowSpeech] = useState(false);
-  const [speechItems, setSpeechItems] = useState<any[]>([]);
-  const [showSpeechReview, setShowSpeechReview] = useState(false);
   const [headerSticky, setHeaderSticky] = useState(false);
   const [showAddDialog, setShowAddDialog] = useState(false);
-  const [addTab, setAddTab] = useState<'finished'|'raw'>('finished');
+  const [addTab, setAddTab] = useState<'finished'|'raw'>(() => (sessionStorage.getItem('inventory_add_tab') as 'finished'|'raw') || 'finished');
   const [rawMaterials, setRawMaterials] = useState<RawMaterial[]>([]);
 
   // Enhanced state
@@ -526,11 +520,6 @@ export default function InventoryEnhanced() {
               </Button>
 
               <SmartImportButton onImport={(t)=>{ setImportSource(t); setShowImport(true); }} />
-
-              <Button onClick={()=>setShowSpeech(true)}>
-                <Mic className="w-4 h-4 mr-2" />
-                Add by Speech
-              </Button>
 
               <Button onClick={() => { setAddTab('finished'); setShowAddDialog(true); }}>
                 <Plus className="w-4 h-4 mr-2" />
@@ -1079,10 +1068,6 @@ export default function InventoryEnhanced() {
                   </Button>
                 ) : (
                   <div className="flex gap-2 justify-center">
-                    <Button onClick={()=>setShowSpeech(true)}>
-                      <Mic className="w-4 h-4 mr-2" />
-                      Add by Speech
-                    </Button>
                     <SmartImportButton onImport={(t)=>{ setImportSource(t); setShowImport(true); }} />
                   </div>
                 )}
@@ -1222,7 +1207,7 @@ export default function InventoryEnhanced() {
             <DialogTitle>Add Inventory Item</DialogTitle>
             <DialogDescription>Choose what you want to add and fill in details. Unit costs auto-calculate.</DialogDescription>
           </DialogHeader>
-          <Tabs value={addTab} onValueChange={(v)=>setAddTab(v as any)}>
+          <Tabs value={addTab} onValueChange={(v)=>{ sessionStorage.setItem('inventory_add_tab', v); setAddTab(v as any); }}>
             <TabsList className="grid grid-cols-2 w-full">
               <TabsTrigger value="finished">Finished Product</TabsTrigger>
               <TabsTrigger value="raw">Raw Material</TabsTrigger>
@@ -1231,19 +1216,12 @@ export default function InventoryEnhanced() {
               <AddProductForm onSuccess={()=>setShowAddDialog(false)} />
             </TabsContent>
             <TabsContent value="raw">
-              <AddRawMaterialForm onSuccess={()=>setShowAddDialog(false)} />
+              <AddRawMaterialForm onSuccess={async ()=>{ setShowAddDialog(false); try { const list = await rawMaterialRepository.getAll(); setRawMaterials(list); } catch { /* ignore */ } }} />
             </TabsContent>
           </Tabs>
         </DialogContent>
       </Dialog>
 
-      {/* Speech Add Panels */}
-      {showSpeech && (
-        <SpeechAddPanel open={showSpeech} onClose={()=>setShowSpeech(false)} onFinish={(items)=>{ setSpeechItems(items); setShowSpeech(false); setShowSpeechReview(true); }} />
-      )}
-      {showSpeechReview && (
-        <SpeechReviewModal open={showSpeechReview} onClose={()=>setShowSpeechReview(false)} items={speechItems as any} />
-      )}
     </div>
   );
 }

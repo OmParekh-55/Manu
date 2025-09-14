@@ -869,6 +869,18 @@ export const COMMON_MODULES: BusinessModule[] = [
 export const BUSINESS_MODULES: BusinessModule[] = [
   // =================== RETAILER SPECIFIC ===================
   {
+    id: "services",
+    title: "Services",
+    description: "Manage services and pricing",
+    icon: "Wrench",
+    path: "/dashboard/retailer/services",
+    businessTypes: ["retailer"],
+    allowedRoles: ["owner", "co_founder", "manager"],
+    category: "inventory",
+    priority: 1,
+    isSpecialized: true,
+  },
+  {
     id: "customer-database",
     title: "Customer Database",
     description: "Manage customer information, history, and purchases",
@@ -906,7 +918,7 @@ export const BUSINESS_MODULES: BusinessModule[] = [
   },
   {
     id: "daily-sales-analytics",
-    title: "Daily/Monthly/Yearly Sales Analytics",
+    title: "Sales Analytics",
     description: "Visual reports for sales trends and patterns",
     icon: "TrendingUp",
     path: "/dashboard/retailer/sales-analytics",
@@ -1674,7 +1686,7 @@ export function getSpecializedModules(
 export function getBusinessTypeConfig(businessType: BusinessType) {
   const configs = {
     retailer: {
-      name: "Retailer",
+      name: "Shop Owner",
       description: "Point of sale and retail operations",
       primaryColor: "blue",
       features: [

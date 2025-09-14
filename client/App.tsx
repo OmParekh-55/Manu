@@ -17,6 +17,7 @@ import ProtectedRoute from "./components/ProtectedRoute"
 import { ThemeProvider } from "next-themes"
 // Business-specific components
 import CustomerDatabase from "./pages/business/retailer/CustomerDatabase"
+import Services from "./pages/business/retailer/Services"
 import ProductCatalog from "./pages/business/ecommerce/ProductCatalog"
 import BookingScheduling from "./pages/business/service/BookingScheduling"
 import CommissionManagement from "./pages/business/wholesale/CommissionManagement"
@@ -549,10 +550,18 @@ const App = () => (
             }
           />
           <Route
+            path="/dashboard/retailer/services"
+            element={
+              <ProtectedRoute requiredPermission="addEditDeleteProducts">
+                <Services />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/dashboard/retailer/inventory"
             element={
               <PlaceholderPage
-                title="Retail Inventory"
+                title="Shop Owner Inventory"
                 description="Advanced inventory management with stock tracking, variants, and alerts."
                 feature="Retail inventory system"
               />

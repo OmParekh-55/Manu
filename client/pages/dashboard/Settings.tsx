@@ -126,7 +126,7 @@ export default function SettingsPage() {
                   >
                     <option value="manufacturer">Manufacturer</option>
                     <option value="wholesaler">Wholesaler</option>
-                    <option value="retailer">Retailer</option>
+                    <option value="retailer">Shop Owner</option>
                     <option value="distributor">Distributor</option>
                     <option value="ecommerce">E-commerce</option>
                     <option value="service">Service Provider</option>

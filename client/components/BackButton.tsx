@@ -61,7 +61,7 @@ export default function BackButton({
         'whatsapp': 'WhatsApp Integration',
         'staff': 'Staff Management',
                 'settings': 'Settings',
-        'retailer': 'Retailer',
+        'retailer': 'Shop Owner',
         'manufacturer': 'Manufacturer',
         'wholesaler': 'Wholesaler',
         'distributor': 'Distributor',

@@ -904,7 +904,7 @@ const BusinessTypeProductForm: React.FC<BusinessTypeProductFormProps> = ({
       <CardHeader>
         <CardTitle className="text-lg text-green-800 flex items-center gap-2">
           <Store className="w-5 h-5" />
-          Retailer / E-commerce / Trader Specific Fields
+          Shop Owner / E-commerce / Trader Specific Fields
         </CardTitle>
         <CardDescription className="text-green-700">
           Additional fields for retail and e-commerce products

@@ -34,7 +34,7 @@ const businessTypeOptions: { value: BusinessType; label: string; description: st
   },
   {
     value: "retailer",
-    label: "Retailer",
+    label: "Shop Owner",
     description: "Point of sale, customer management, and inventory",
   },
   {

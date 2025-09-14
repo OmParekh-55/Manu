@@ -20,20 +20,8 @@ export function useAddProduct() {
   const setLast = useProductStore((s) => s.setLastAddedId);
   return useMutation({
     mutationFn: async (input: ProductInput) => {
-      const parsed = ProductSchema.parse(input);
-      const costPerUnit = parsed.orderQuantity > 0 ? parsed.totalCost / parsed.orderQuantity : 0;
-      const record: Omit<Product, 'id'> = {
-        name: parsed.name,
-        sku: parsed.sku,
-        category: parsed.category,
-        variant: parsed.variant,
-        orderQuantity: parsed.orderQuantity,
-        totalCost: parsed.totalCost,
-        costPerUnit,
-        expiry: parsed.expiry,
-        unit: parsed.unit ?? 'pcs'
-      };
-      return productRepository.add(record);
+      const { FinishedProductProvider } = await import('@/lib/providers/FinishedProductProvider');
+      return FinishedProductProvider.addFinishedProduct(input);
     },
     onSuccess: (res) => {
       setLast(res.id);
