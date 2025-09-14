@@ -1078,6 +1078,7 @@ export default function InventoryEnhanced() {
       </Card>
 
       {/* Raw Material Inventory */}
+      {permissions.businessType !== 'retailer' && (
       <Card className="mt-6">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
@@ -1136,6 +1137,7 @@ export default function InventoryEnhanced() {
           </div>
         </CardContent>
       </Card>
+      )}
 
       {/* Context Menu */}
       {contextMenu && (
