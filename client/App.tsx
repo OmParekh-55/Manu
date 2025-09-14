@@ -19,6 +19,8 @@ import { ThemeProvider } from "next-themes"
 import CustomerDatabase from "./pages/business/retailer/CustomerDatabase"
 import Services from "./pages/business/retailer/Services"
 import ProductCatalog from "./pages/business/ecommerce/ProductCatalog"
+import FinishedProductInventory from "./pages/business/manufacturer/FinishedProductInventory"
+import RawMaterialInventory from "./pages/business/manufacturer/RawMaterialInventory"
 import BookingScheduling from "./pages/business/service/BookingScheduling"
 import CommissionManagement from "./pages/business/wholesale/CommissionManagement"
 // Manufacturer components
@@ -831,6 +833,8 @@ const App = () => (
               </ProtectedRoute>
             }
           />
+          <Route path="/dashboard/manufacturer/finished-product-inventory" element={<FinishedProductInventory />} />
+          <Route path="/dashboard/manufacturer/raw-material-inventory" element={<RawMaterialInventory />} />
           <Route
             path="/dashboard/manufacturer/production"
             element={

@@ -1151,6 +1151,30 @@ export const BUSINESS_MODULES: BusinessModule[] = [
 
   // =================== MANUFACTURER SPECIFIC ===================
   {
+    id: "manufacturer-finished-inventory",
+    title: "Finished Product Inventory",
+    description: "Add, view, and edit finished products",
+    icon: "Package",
+    path: "/dashboard/manufacturer/finished-product-inventory",
+    businessTypes: ["manufacturer"],
+    allowedRoles: ["owner", "co_founder", "manager", "inventory_manager"],
+    category: "inventory",
+    priority: 1,
+    isSpecialized: true,
+  },
+  {
+    id: "manufacturer-raw-inventory",
+    title: "Raw Material Inventory",
+    description: "Add, view, and edit raw materials",
+    icon: "Warehouse",
+    path: "/dashboard/manufacturer/raw-material-inventory",
+    businessTypes: ["manufacturer"],
+    allowedRoles: ["owner", "co_founder", "manager", "inventory_manager"],
+    category: "inventory",
+    priority: 2,
+    isSpecialized: true,
+  },
+  {
     id: "recipe",
     title: "Recipe",
     description: "Manage product recipes and material requirements",
