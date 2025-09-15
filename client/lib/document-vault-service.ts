@@ -8,10 +8,10 @@ export interface BusinessDocument {
   fileName: string;
   fileSize: number;
   mimeType: string;
-  fileUrl?: string; // For actual file storage
-  fileContent?: string; // For base64 content storage
-  documentNumber?: string; // Invoice number, PO number, etc.
-  amount?: number; // For financial documents
+  fileUrl?: string;
+  fileContent?: string;
+  documentNumber?: string;
+  amount?: number;
   currency: string;
   customerName?: string;
   vendorName?: string;
@@ -23,6 +23,7 @@ export interface BusinessDocument {
   tags: string[];
   category: string;
   businessType: string;
+  folderId?: string;
   branchId?: string;
   departmentId?: string;
   createdBy: string;
@@ -39,7 +40,7 @@ export interface BusinessDocument {
     permissions: 'view' | 'download' | 'edit';
   }[];
   version: number;
-  parentDocumentId?: string; // For document versions
+  parentDocumentId?: string;
   metadata?: {
     gstNumber?: string;
     taxAmount?: string;
@@ -49,6 +50,17 @@ export interface BusinessDocument {
     paymentStatus?: string;
     approvedBy?: string;
     approvedAt?: string;
+    saleId?: string;
+    invoiceNo?: string;
+    dateTime?: string;
+    subtotal?: string;
+    total?: string;
+    lineItemsJson?: string;
+    salespersonName?: string;
+    commissionRatePct?: string;
+    commissionAmount?: string;
+    fileUrl?: string;
+    customizationJson?: string;
   };
 }
 
@@ -93,10 +105,12 @@ export interface DocumentSearch {
   folderId?: string;
 }
 
+import { authService } from './auth-service';
+
 class DocumentVaultService {
-  private readonly DOCUMENTS_KEY = 'hisaabb_documents';
-  private readonly FOLDERS_KEY = 'hisaabb_document_folders';
-  private readonly ACTIVITIES_KEY = 'hisaabb_document_activities';
+  private readonly DOCUMENTS_KEY = 'insygth_documents';
+  private readonly FOLDERS_KEY = 'insygth_document_folders';
+  private readonly ACTIVITIES_KEY = 'insygth_document_activities';
 
   // Initialize default folders
   private initializeDefaultFolders(): DocumentFolder[] {
@@ -206,12 +220,15 @@ class DocumentVaultService {
     return documents.find(doc => doc.id === id) || null;
   }
 
-  addDocument(documentData: Omit<BusinessDocument, 'id' | 'createdAt' | 'updatedAt' | 'version'>): { success: boolean; document?: BusinessDocument; message: string } {
+  addDocument(documentData: Omit<BusinessDocument, 'id' | 'createdAt' | 'updatedAt' | 'version' | 'createdBy' | 'createdByName'>): { success: boolean; document?: BusinessDocument; message: string } {
     try {
       const documents = this.getAllDocuments();
-      
+      const currentUser = authService.getCurrentUser();
+
       const document: BusinessDocument = {
         ...documentData,
+        createdBy: currentUser?.id || 'system',
+        createdByName: currentUser?.name || 'System',
         id: Date.now().toString(),
         version: 1,
         createdAt: new Date().toISOString(),
@@ -335,11 +352,11 @@ class DocumentVaultService {
   private updateFolderCount(): void {
     const documents = this.getAllDocuments();
     const folders = this.getAllFolders();
-    
+
     folders.forEach(folder => {
-      folder.documentCount = documents.filter(doc => doc.category === folder.id).length;
+      folder.documentCount = documents.filter(doc => doc.folderId === folder.id).length;
     });
-    
+
     localStorage.setItem(this.FOLDERS_KEY, JSON.stringify(folders));
   }
 
@@ -480,13 +497,13 @@ class DocumentVaultService {
   private logActivity(activityData: Omit<DocumentActivity, 'id' | 'userId' | 'userName' | 'timestamp'>): void {
     try {
       const activities = this.getAllActivities();
-      const currentUser = JSON.parse(localStorage.getItem('hisaabb_current_user') || '{}');
-      
+      const currentUser = authService.getCurrentUser();
+
       const activity: DocumentActivity = {
         ...activityData,
         id: Date.now().toString(),
-        userId: currentUser.id || 'system',
-        userName: currentUser.name || 'System',
+        userId: currentUser?.id || 'system',
+        userName: currentUser?.name || 'System',
         timestamp: new Date().toISOString()
       };
 
@@ -611,15 +628,13 @@ class DocumentVaultService {
     date: string;
     dueDate?: string;
     status: string;
-    createdBy: string;
-    createdByName: string;
   }): { success: boolean; message: string } {
     return this.addDocument({
       type: 'invoice',
       title: `Invoice #${invoiceData.invoiceNumber}`,
       description: `Sales invoice for ${invoiceData.customerName}`,
       fileName: `invoice-${invoiceData.invoiceNumber}.pdf`,
-      fileSize: 0, // Will be updated when actual file is generated
+      fileSize: 0,
       mimeType: 'application/pdf',
       documentNumber: invoiceData.invoiceNumber,
       amount: invoiceData.amount,
@@ -631,9 +646,8 @@ class DocumentVaultService {
       status: invoiceData.status as any,
       tags: ['auto-generated', 'invoice'],
       category: 'invoices',
+      folderId: 'invoices',
       businessType: 'general',
-      createdBy: invoiceData.createdBy,
-      createdByName: invoiceData.createdByName,
       accessLevel: 'restricted',
       allowedRoles: ['owner', 'co_founder', 'manager', 'accountant', 'sales_executive']
     });
