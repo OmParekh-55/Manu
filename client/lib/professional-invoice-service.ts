@@ -51,6 +51,11 @@ export interface InvoiceData {
   totalInWords: string;
   notes?: string;
   paymentTerms?: string;
+  paymentMode?: 'Cash' | 'UPI' | 'Card';
+  paymentStatus?: 'Paid' | 'Pending';
+  salespersonName?: string;
+  commissionRatePct?: number;
+  commissionAmount?: number;
   bankDetails?: {
     accountName: string;
     accountNumber: string;
@@ -538,7 +543,20 @@ export class ProfessionalInvoiceService {
                 ${invoiceData.notes}
               </div>
             ` : ''}
-            
+
+            <!-- Sales Info -->
+            ${(invoiceData.salespersonName || invoiceData.paymentMode || invoiceData.paymentStatus || invoiceData.commissionAmount) ? `
+              <div class="terms-section">
+                <div class="section-title">Sales Info</div>
+                <div style="background:#f8fafc;padding:12px;border-radius:8px">
+                  ${invoiceData.salespersonName ? `<div><strong>Salesperson:</strong> ${invoiceData.salespersonName}</div>` : ''}
+                  ${(invoiceData.commissionRatePct != null && invoiceData.commissionAmount != null) ? `<div><strong>Commission:</strong> ${invoiceData.commissionRatePct}% | Amount: ₹${Number(invoiceData.commissionAmount).toFixed(2)}</div>` : ''}
+                  ${invoiceData.paymentMode ? `<div><strong>Payment Mode:</strong> ${invoiceData.paymentMode}</div>` : ''}
+                  ${invoiceData.paymentStatus ? `<div><strong>Payment Status:</strong> ${invoiceData.paymentStatus}</div>` : ''}
+                </div>
+              </div>
+            ` : ''}
+
             <!-- Terms and Conditions -->
             ${config.showTermsAndConditions ? `
               <div class="terms-section">
@@ -548,7 +566,7 @@ export class ProfessionalInvoiceService {
                 </ul>
               </div>
             ` : ''}
-            
+
             <!-- Footer -->
             <div class="footer">
               <div class="bank-details">
@@ -751,23 +769,15 @@ export class ProfessionalInvoiceService {
       // Import Document Vault service
       const { documentVaultService } = await import('./document-vault-service');
 
-      // Convert blob to base64 safely without overflowing the call stack
-      const blobToBase64 = (blob: Blob) => new Promise<string>((resolve, reject) => {
+      // Convert blob to data URL safely without overflowing the call stack
+      const blobToDataUrl = (blob: Blob) => new Promise<string>((resolve, reject) => {
         const reader = new FileReader();
-        reader.onloadend = () => {
-          try {
-            const dataUrl = String(reader.result || '');
-            const base64 = dataUrl.includes(',') ? dataUrl.split(',')[1] : dataUrl;
-            resolve(base64);
-          } catch (e) {
-            reject(e);
-          }
-        };
+        reader.onloadend = () => resolve(String(reader.result || ''));
         reader.onerror = reject;
         reader.readAsDataURL(blob);
       });
 
-      const base64 = await blobToBase64(pdfBlob);
+      const dataUrl = await blobToDataUrl(pdfBlob);
 
       const documentData = {
         type: 'invoice' as const,
@@ -776,7 +786,7 @@ export class ProfessionalInvoiceService {
         fileName: `Invoice_${invoiceData.invoiceNumber}.pdf`,
         fileSize: pdfBlob.size,
         mimeType: 'application/pdf',
-        fileContent: base64,
+        fileContent: dataUrl,
         documentNumber: invoiceData.invoiceNumber,
         amount: invoiceData.totalAmount,
         currency: 'INR',
@@ -784,21 +794,31 @@ export class ProfessionalInvoiceService {
         customerPhone: invoiceData.customer.phone,
         date: invoiceData.invoiceDate,
         dueDate: invoiceData.dueDate,
-        status: 'sent' as const,
+        status: (invoiceData.paymentStatus === 'Paid' ? 'paid' : 'sent') as const,
         tags: ['invoice', 'professional', 'generated'],
-        category: 'Financial',
+        category: 'invoices',
+        folderId: 'invoices',
         businessType: 'general',
         accessLevel: 'restricted' as const,
-        allowedRoles: ['owner', 'co_founder', 'manager', 'accountant'] as const,
+        allowedRoles: ['owner', 'co_founder', 'manager', 'accountant', 'sales_executive'] as const,
         metadata: {
           gstNumber: invoiceData.customer.gstNumber || '',
           taxAmount: invoiceData.taxAmount.toString(),
           discountAmount: invoiceData.totalDiscount.toString(),
           totalBeforeTax: invoiceData.subtotal.toString(),
-          paymentMethod: 'pending',
-          paymentStatus: 'pending',
-          templateVersion: '2.0',
-          customization: JSON.stringify(customization || {})
+          paymentMethod: String(invoiceData.paymentMode || ''),
+          paymentStatus: String(invoiceData.paymentStatus || ''),
+          saleId: String(invoiceData.id || ''),
+          invoiceNo: invoiceData.invoiceNumber,
+          dateTime: invoiceData.invoiceDate,
+          subtotal: invoiceData.subtotal.toString(),
+          total: invoiceData.totalAmount.toString(),
+          lineItemsJson: JSON.stringify(invoiceData.items || []),
+          salespersonName: invoiceData.salespersonName || '',
+          commissionRatePct: invoiceData.commissionRatePct != null ? String(invoiceData.commissionRatePct) : '',
+          commissionAmount: invoiceData.commissionAmount != null ? String(invoiceData.commissionAmount) : '',
+          fileUrl: '',
+          customizationJson: JSON.stringify(customization || {})
         }
       };
 
