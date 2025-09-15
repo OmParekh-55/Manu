@@ -16,6 +16,8 @@ import { dataManager } from '@/lib/data-manager';
 import { professionalInvoiceService } from '@/lib/professional-invoice-service';
 import { authService } from '@/lib/auth-service';
 
+interface LineItem { id: string; type: 'product' | 'service'; name: string; quantity: number; unitPrice: number; }
+
 interface FormState {
   productId: string;
   productLabel: string;
@@ -28,6 +30,9 @@ interface FormState {
   customerName?: string;
   salespersonId?: string;
   description?: string;
+  serviceId?: string;
+  serviceQty?: number;
+  serviceUnitPrice?: number;
 }
 
 export default function NewSale() {
