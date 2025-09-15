@@ -155,7 +155,7 @@ export default function InventoryEnhanced() {
   const enhancedToast = useEnhancedToast();
   
   // State management
-  const [products, setProducts] = useState<Product[]>(sampleProducts);
+  const [products, setProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState('all');
@@ -1212,14 +1212,18 @@ export default function InventoryEnhanced() {
           <Tabs value={addTab} onValueChange={(v)=>{ sessionStorage.setItem('inventory_add_tab', v); setAddTab(v as any); }}>
             <TabsList className="grid grid-cols-2 w-full">
               <TabsTrigger value="finished">Finished Product</TabsTrigger>
-              <TabsTrigger value="raw">Raw Material</TabsTrigger>
+              {permissions.businessType !== 'retailer' && (
+                <TabsTrigger value="raw">Raw Material</TabsTrigger>
+              )}
             </TabsList>
             <TabsContent value="finished">
               <AddProductForm onSuccess={()=>setShowAddDialog(false)} />
             </TabsContent>
-            <TabsContent value="raw">
-              <AddRawMaterialForm onSuccess={async ()=>{ setShowAddDialog(false); try { const list = await rawMaterialRepository.getAll(); setRawMaterials(list); } catch { /* ignore */ } }} />
-            </TabsContent>
+            {permissions.businessType !== 'retailer' && (
+              <TabsContent value="raw">
+                <AddRawMaterialForm onSuccess={async ()=>{ setShowAddDialog(false); try { const list = await rawMaterialRepository.getAll(); setRawMaterials(list); } catch { /* ignore */ } }} />
+              </TabsContent>
+            )}
           </Tabs>
         </DialogContent>
       </Dialog>
