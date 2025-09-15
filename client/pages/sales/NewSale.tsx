@@ -185,8 +185,16 @@ export default function NewSale() {
             quantity: sale.quantity,
             unit: 'pcs',
             rate: sale.sellingPricePerUnit,
-            amount: subtotal
-          }
+            amount: (form.quantity || 0) * (form.unitPrice || 0)
+          },
+          ...items.filter(i=>i.type==='service').map(i=>({
+            id: i.id,
+            description: i.name,
+            quantity: i.quantity,
+            unit: 'service',
+            rate: i.unitPrice,
+            amount: i.quantity * i.unitPrice
+          }))
         ],
         subtotal,
         totalDiscount: 0,
