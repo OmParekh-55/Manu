@@ -16,23 +16,26 @@ import { dataManager } from '@/lib/data-manager';
 import { professionalInvoiceService } from '@/lib/professional-invoice-service';
 import { authService } from '@/lib/auth-service';
 
-interface LineItem { id: string; type: 'product' | 'service'; name: string; quantity: number; unitPrice: number; }
+interface LineItem { id: string; type: 'product' | 'service'; name: string; quantity: number; unitPrice: number; isCustom?: boolean; }
 
 interface FormState {
   productId: string;
   productLabel: string;
-  quantity: number;
-  unitPrice: number;
+  customProductName?: string;
+  productQty?: number;
+  productUnitPrice?: number;
   taxRate: number; // 0 | 5 | 12 | 18 | 28
   paymentMode: 'Cash' | 'UPI' | 'Card' | '';
   paymentStatus: 'Pending' | 'Paid' | '';
   customerPhone: string;
   customerName?: string;
   salespersonId?: string;
+  commissionRatePct?: number;
   description?: string;
   serviceId?: string;
   serviceQty?: number;
   serviceUnitPrice?: number;
+  customServiceName?: string;
 }
 
 export default function NewSale() {
