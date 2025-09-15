@@ -64,7 +64,8 @@ export default function NewSale() {
 
   const selectedProduct = useMemo(() => products.find(p => p.id === form.productId), [products, form.productId]);
 
-  const subtotal = useMemo(() => Math.max(0, (form.quantity || 0) * (form.unitPrice || 0)), [form.quantity, form.unitPrice]);
+  const servicesSubtotal = useMemo(() => items.filter(i=>i.type==='service').reduce((s,i)=>s + (i.quantity||0)*(i.unitPrice||0), 0), [items]);
+  const subtotal = useMemo(() => Math.max(0, (form.quantity || 0) * (form.unitPrice || 0)) + servicesSubtotal, [form.quantity, form.unitPrice, servicesSubtotal]);
   const taxAmount = useMemo(() => (subtotal * (form.taxRate || 0)) / 100, [subtotal, form.taxRate]);
   const total = useMemo(() => subtotal + taxAmount, [subtotal, taxAmount]);
 
