@@ -11,6 +11,8 @@ import { attendanceService } from "@/lib/attendance-service"
 import { useAuth } from "@/hooks/use-auth"
 import { toast } from "@/hooks/use-toast"
 import type { AttendanceRecord } from "../../../shared/types"
+import * as XLSX from "xlsx"
+import jsPDF from "jspdf"
 
 export function AttendanceReports() {
   const { user, business } = useAuth()
@@ -42,7 +44,7 @@ export function AttendanceReports() {
     }
   }
 
-  const exportToPDF = async () => {
+  const exportCSV = async () => {
     const csvContent = generateCSVContent()
     const blob = new Blob([csvContent], { type: "text/csv" })
     const url = window.URL.createObjectURL(blob)
@@ -58,6 +60,70 @@ export function AttendanceReports() {
       title: "Export Successful",
       description: "Attendance report has been downloaded as CSV",
     })
+  }
+
+  const exportExcel = () => {
+    const headers = ["Date", "Check In", "Check Out", "Location", "Status", "Working Hours"]
+    const rows = monthlyData.map((record) => ({
+      Date: record.date,
+      "Check In": record.checkInTime ? new Date(record.checkInTime).toLocaleTimeString() : "-",
+      "Check Out": record.checkOutTime ? new Date(record.checkOutTime).toLocaleTimeString() : "-",
+      Location: record.location,
+      Status: record.status,
+      "Working Hours": record.workingHours ?? "-",
+    }))
+    const worksheet = XLSX.utils.json_to_sheet(rows, { header: headers })
+    const workbook = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Attendance")
+    XLSX.writeFile(workbook, `attendance-${selectedYear}-${selectedMonth.toString().padStart(2, "0")}.xlsx`)
+
+    toast({ title: "Export Successful", description: "Excel file downloaded" })
+  }
+
+  const exportPDF = () => {
+    const doc = new jsPDF()
+    doc.setFontSize(14)
+    doc.text("Attendance Report", 14, 16)
+    doc.setFontSize(10)
+    doc.text(`Period: ${selectedYear}-${selectedMonth.toString().padStart(2, "0")}`, 14, 22)
+
+    let y = 30
+    const lineHeight = 6
+    doc.text("Date | In | Out | Loc | Status | Hours", 14, y)
+    y += lineHeight
+    monthlyData.forEach((r) => {
+      const line = `${r.date} | ${r.checkInTime ? new Date(r.checkInTime).toLocaleTimeString() : "-"} | ${r.checkOutTime ? new Date(r.checkOutTime).toLocaleTimeString() : "-"} | ${r.location} | ${r.status} | ${r.workingHours ?? "-"}`
+      doc.text(line, 14, y)
+      y += lineHeight
+      if (y > 280) {
+        doc.addPage()
+        y = 20
+      }
+    })
+
+    doc.save(`attendance-${selectedYear}-${selectedMonth.toString().padStart(2, "0")}.pdf`)
+    toast({ title: "Export Successful", description: "PDF downloaded" })
+  }
+
+  const exportPayrollCSV = () => {
+    const headers = ["Date", "Present", "Hours", "OvertimeHours"]
+    const rows = monthlyData.map((r) => {
+      const hours = r.workingHours || 0
+      const overtime = Math.max(0, hours - 8)
+      return [r.date, r.status === "present" ? 1 : 0, hours, overtime]
+    })
+    const csv = [headers, ...rows].map((row) => row.join(",")).join("\n")
+    const blob = new Blob([csv], { type: "text/csv" })
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = `payroll-${selectedYear}-${selectedMonth.toString().padStart(2, "0")}.csv`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    window.URL.revokeObjectURL(url)
+
+    toast({ title: "Export Successful", description: "Payroll summary CSV downloaded" })
   }
 
   const generateCSVContent = () => {
@@ -95,10 +161,24 @@ export function AttendanceReports() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Attendance Reports</h2>
-        <Button onClick={exportToPDF} variant="outline">
-          <Download className="h-4 w-4 mr-2" />
-          Export CSV
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={exportCSV} variant="outline">
+            <Download className="h-4 w-4 mr-2" />
+            CSV
+          </Button>
+          <Button onClick={exportExcel} variant="outline">
+            <Download className="h-4 w-4 mr-2" />
+            Excel
+          </Button>
+          <Button onClick={exportPDF} variant="outline">
+            <Download className="h-4 w-4 mr-2" />
+            PDF
+          </Button>
+          <Button onClick={exportPayrollCSV} variant="outline">
+            <Download className="h-4 w-4 mr-2" />
+            Payroll CSV
+          </Button>
+        </div>
       </div>
 
       {/* Month/Year Selection */}

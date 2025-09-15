@@ -35,8 +35,7 @@ import {
   Check,
   Undo2,
   FileText,
-  Tag,
-  Mic
+  Tag
 } from 'lucide-react';
 import { usePermissions } from '@/lib/permissions';
 import { inventoryService } from '@/lib/inventory-service';
@@ -47,8 +46,6 @@ import { usePageShortcuts } from '@/hooks/use-keyboard-shortcuts';
 import { useBulkSelection } from '@/hooks/use-bulk-selection';
 import { SmartImportButton } from '@/components/import/SmartImportButton';
 import SmartImportModal from '@/components/import/SmartImportModal';
-import SpeechAddPanel from '@/components/speech/SpeechAddPanel';
-import SpeechReviewModal from '@/components/speech/SpeechReviewModal';
 import AddProductForm from '@/components/forms/AddProductForm';
 import AddRawMaterialForm from '@/components/forms/AddRawMaterialForm';
 import { rawMaterialRepository } from '@/services/indexeddb/repositories/rawMaterialRepository';
@@ -87,78 +84,14 @@ interface Filter {
   options?: { label: string; value: any }[];
 }
 
-const sampleProducts: Product[] = [
-  {
-    id: '1',
-    name: 'Wireless Bluetooth Headphones',
-    sku: 'WBH-001',
-    category: 'Electronics',
-    price: 2999,
-    stock: 45,
-    minStock: 10,
-    status: 'active',
-    lastUpdated: '2024-01-15',
-    tags: ['popular', 'wireless'],
-    starred: true,
-    notes: 'Best seller this month'
-  },
-  {
-    id: '2',
-    name: 'Cotton T-Shirt (Blue)',
-    sku: 'CT-BLU-M',
-    category: 'Clothing',
-    price: 599,
-    stock: 8,
-    minStock: 10,
-    status: 'active',
-    lastUpdated: '2024-01-14',
-    tags: ['clothing', 'cotton']
-  },
-  {
-    id: '3',
-    name: 'Stainless Steel Water Bottle',
-    sku: 'SSWB-500',
-    category: 'Home & Garden',
-    price: 899,
-    stock: 0,
-    minStock: 5,
-    status: 'out_of_stock',
-    lastUpdated: '2024-01-13',
-    tags: ['eco-friendly', 'steel']
-  },
-  {
-    id: '4',
-    name: 'Organic Green Tea (50 bags)',
-    sku: 'OGT-50B',
-    category: 'Food & Beverages',
-    price: 349,
-    stock: 22,
-    minStock: 15,
-    status: 'active',
-    lastUpdated: '2024-01-12',
-    tags: ['organic', 'tea'],
-    starred: true
-  },
-  {
-    id: '5',
-    name: 'LED Desk Lamp',
-    sku: 'LED-DL-001',
-    category: 'Electronics',
-    price: 1299,
-    stock: 3,
-    minStock: 8,
-    status: 'active',
-    lastUpdated: '2024-01-11',
-    tags: ['led', 'office']
-  }
-];
+const sampleProducts: Product[] = [];
 
 export default function InventoryEnhanced() {
   const permissions = usePermissions();
   const enhancedToast = useEnhancedToast();
   
   // State management
-  const [products, setProducts] = useState<Product[]>(sampleProducts);
+  const [products, setProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState('all');
@@ -171,12 +104,9 @@ export default function InventoryEnhanced() {
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; product: Product } | null>(null);
   const [showImport, setShowImport] = useState(false);
   const [importSource, setImportSource] = useState<'image'|'file'>('file');
-  const [showSpeech, setShowSpeech] = useState(false);
-  const [speechItems, setSpeechItems] = useState<any[]>([]);
-  const [showSpeechReview, setShowSpeechReview] = useState(false);
   const [headerSticky, setHeaderSticky] = useState(false);
   const [showAddDialog, setShowAddDialog] = useState(false);
-  const [addTab, setAddTab] = useState<'finished'|'raw'>('finished');
+  const [addTab, setAddTab] = useState<'finished'|'raw'>(() => (sessionStorage.getItem('inventory_add_tab') as 'finished'|'raw') || 'finished');
   const [rawMaterials, setRawMaterials] = useState<RawMaterial[]>([]);
 
   // Enhanced state
@@ -526,11 +456,6 @@ export default function InventoryEnhanced() {
               </Button>
 
               <SmartImportButton onImport={(t)=>{ setImportSource(t); setShowImport(true); }} />
-
-              <Button onClick={()=>setShowSpeech(true)}>
-                <Mic className="w-4 h-4 mr-2" />
-                Add by Speech
-              </Button>
 
               <Button onClick={() => { setAddTab('finished'); setShowAddDialog(true); }}>
                 <Plus className="w-4 h-4 mr-2" />
@@ -1079,10 +1004,6 @@ export default function InventoryEnhanced() {
                   </Button>
                 ) : (
                   <div className="flex gap-2 justify-center">
-                    <Button onClick={()=>setShowSpeech(true)}>
-                      <Mic className="w-4 h-4 mr-2" />
-                      Add by Speech
-                    </Button>
                     <SmartImportButton onImport={(t)=>{ setImportSource(t); setShowImport(true); }} />
                   </div>
                 )}
@@ -1093,6 +1014,7 @@ export default function InventoryEnhanced() {
       </Card>
 
       {/* Raw Material Inventory */}
+      {permissions.businessType !== 'retailer' && (
       <Card className="mt-6">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
@@ -1151,6 +1073,7 @@ export default function InventoryEnhanced() {
           </div>
         </CardContent>
       </Card>
+      )}
 
       {/* Context Menu */}
       {contextMenu && (
@@ -1222,28 +1145,25 @@ export default function InventoryEnhanced() {
             <DialogTitle>Add Inventory Item</DialogTitle>
             <DialogDescription>Choose what you want to add and fill in details. Unit costs auto-calculate.</DialogDescription>
           </DialogHeader>
-          <Tabs value={addTab} onValueChange={(v)=>setAddTab(v as any)}>
+          <Tabs value={addTab} onValueChange={(v)=>{ sessionStorage.setItem('inventory_add_tab', v); setAddTab(v as any); }}>
             <TabsList className="grid grid-cols-2 w-full">
               <TabsTrigger value="finished">Finished Product</TabsTrigger>
-              <TabsTrigger value="raw">Raw Material</TabsTrigger>
+              {permissions.businessType !== 'retailer' && (
+                <TabsTrigger value="raw">Raw Material</TabsTrigger>
+              )}
             </TabsList>
             <TabsContent value="finished">
               <AddProductForm onSuccess={()=>setShowAddDialog(false)} />
             </TabsContent>
-            <TabsContent value="raw">
-              <AddRawMaterialForm onSuccess={()=>setShowAddDialog(false)} />
-            </TabsContent>
+            {permissions.businessType !== 'retailer' && (
+              <TabsContent value="raw">
+                <AddRawMaterialForm onSuccess={async ()=>{ setShowAddDialog(false); try { const list = await rawMaterialRepository.getAll(); setRawMaterials(list); } catch { /* ignore */ } }} />
+              </TabsContent>
+            )}
           </Tabs>
         </DialogContent>
       </Dialog>
 
-      {/* Speech Add Panels */}
-      {showSpeech && (
-        <SpeechAddPanel open={showSpeech} onClose={()=>setShowSpeech(false)} onFinish={(items)=>{ setSpeechItems(items); setShowSpeech(false); setShowSpeechReview(true); }} />
-      )}
-      {showSpeechReview && (
-        <SpeechReviewModal open={showSpeechReview} onClose={()=>setShowSpeechReview(false)} items={speechItems as any} />
-      )}
     </div>
   );
 }

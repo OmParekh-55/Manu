@@ -2,6 +2,7 @@ import { attendanceRepository } from "../services/indexeddb/repositories/attenda
 import { leaveRepository } from "../services/indexeddb/repositories/leaveRepository"
 import { notificationService } from "./notification-service"
 import type { AttendanceRecord, LeaveRequest, WorkLocation } from "../../shared/types"
+import { businessRepository } from "@/services/indexeddb/repositories/businessRepository"
 
 class AttendanceService {
   async checkIn(
@@ -11,6 +12,12 @@ class AttendanceService {
     coordinates?: { lat: number; lng: number },
   ): Promise<AttendanceRecord> {
     try {
+      // Validate business exists (enforces valid Business Code context)
+      const business = await businessRepository.findById(businessId)
+      if (!business) {
+        throw new Error("Invalid Business Code. Please join a valid business to check in.")
+      }
+
       const record = await attendanceRepository.checkIn(businessId, staffId, location, coordinates)
 
       // Send notification to owner

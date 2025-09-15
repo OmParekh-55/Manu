@@ -17,7 +17,10 @@ import ProtectedRoute from "./components/ProtectedRoute"
 import { ThemeProvider } from "next-themes"
 // Business-specific components
 import CustomerDatabase from "./pages/business/retailer/CustomerDatabase"
+import Services from "./pages/business/retailer/Services"
 import ProductCatalog from "./pages/business/ecommerce/ProductCatalog"
+import FinishedProductInventory from "./pages/business/manufacturer/FinishedProductInventory"
+import RawMaterialInventory from "./pages/business/manufacturer/RawMaterialInventory"
 import BookingScheduling from "./pages/business/service/BookingScheduling"
 import CommissionManagement from "./pages/business/wholesale/CommissionManagement"
 // Manufacturer components
@@ -38,6 +41,7 @@ import AttendanceManagement from "./pages/staff/AttendanceManagement"
 import PerformanceTracking from "./pages/staff/PerformanceTracking"
 import StaffCommissionManagement from "./pages/staff/CommissionManagement"
 import StaffLeaderboard from "./pages/staff/StaffLeaderboard"
+import StaffAttendance from "./pages/staff/StaffAttendance"
 import SupportTickets from "./pages/staff/SupportTickets"
 import InternalChat from "./pages/InternalChat"
 import TaskAssignment from "./pages/TaskAssignment"
@@ -367,6 +371,14 @@ const App = () => (
             }
           />
           <Route
+            path="/dashboard/staff/attendance"
+            element={
+              <ProtectedRoute requiredPermission="hrAndStaffAttendance">
+                <StaffAttendance />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/dashboard/staff/requests"
             element={
               <ProtectedRoute ownerOnly={true}>
@@ -540,10 +552,18 @@ const App = () => (
             }
           />
           <Route
+            path="/dashboard/retailer/services"
+            element={
+              <ProtectedRoute requiredPermission="addEditDeleteProducts">
+                <Services />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/dashboard/retailer/inventory"
             element={
               <PlaceholderPage
-                title="Retail Inventory"
+                title="Shop Owner Inventory"
                 description="Advanced inventory management with stock tracking, variants, and alerts."
                 feature="Retail inventory system"
               />
@@ -813,6 +833,8 @@ const App = () => (
               </ProtectedRoute>
             }
           />
+          <Route path="/dashboard/manufacturer/finished-product-inventory" element={<FinishedProductInventory />} />
+          <Route path="/dashboard/manufacturer/raw-material-inventory" element={<RawMaterialInventory />} />
           <Route
             path="/dashboard/manufacturer/production"
             element={

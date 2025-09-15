@@ -16,13 +16,14 @@ export type DBSchema = {
   attendance_records: { key: string; value: any }
   leave_requests: { key: string; value: any }
   shifts: { key: string; value: any }
+  services: { key: string; value: any }
 }
 
 let dbPromise: Promise<IDBPDatabase<DBSchema>> | null = null
 
 export function getDB() {
   if (!dbPromise) {
-    dbPromise = openDB<DBSchema>("insygth_db", 6, {
+    dbPromise = openDB<DBSchema>("insygth_db", 7, {
       upgrade(db, oldVersion) {
         if (!db.objectStoreNames.contains("raw_materials")) db.createObjectStore("raw_materials", { keyPath: "id" })
         if (!db.objectStoreNames.contains("products")) db.createObjectStore("products", { keyPath: "id" })
@@ -67,6 +68,10 @@ export function getDB() {
         if (!db.objectStoreNames.contains("shifts")) {
           const shiftStore = db.createObjectStore("shifts", { keyPath: "id" })
           shiftStore.createIndex("businessId", "businessId", { unique: false })
+        }
+
+        if (!db.objectStoreNames.contains("services")) {
+          db.createObjectStore("services", { keyPath: "id" })
         }
       },
     })

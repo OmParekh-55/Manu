@@ -33,7 +33,7 @@ const businessTypes = [
   },
   {
     type: 'retailer' as BusinessType,
-    title: 'Retailer',
+    title: 'Shop Owner',
     description: 'Point of sale, inventory management, and customer engagement',
     icon: Store,
     features: ['Point of Sale', 'Customer Management', 'Inventory Control', 'Sales Analytics']

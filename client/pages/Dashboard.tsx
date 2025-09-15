@@ -274,7 +274,7 @@ export default function Dashboard() {
                     className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors group"
                   >
                     <Clock className="w-5 h-5" />
-                    <span className="text-sm font-medium">Attendance Tracker</span>
+                    <span className="text-sm font-medium">Staff Attendance</span>
                     <ChevronRight className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
 

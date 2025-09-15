@@ -20,20 +20,8 @@ export function useAddRawMaterial() {
   const setLast = useRawMaterialStore((s) => s.setLastAddedId);
   return useMutation({
     mutationFn: async (input: RawMaterialInput) => {
-      const parsed = RawMaterialSchema.parse(input);
-      const unitPrice = parsed.quantity > 0 ? parsed.totalPrice / parsed.quantity : 0;
-      const record: Omit<RawMaterial, 'id'> = {
-        name: parsed.name,
-        category: parsed.category,
-        unit: parsed.unit,
-        quantity: parsed.quantity,
-        warehouse: parsed.warehouse ?? '',
-        expiry: parsed.expiry,
-        totalPrice: parsed.totalPrice,
-        unitPrice,
-        createdAt: new Date().toISOString()
-      };
-      return rawMaterialRepository.add(record);
+      const { RawMaterialProvider } = await import('@/lib/providers/RawMaterialProvider');
+      return RawMaterialProvider.addRawMaterial(input);
     },
     onSuccess: (res) => {
       setLast(res.id);
