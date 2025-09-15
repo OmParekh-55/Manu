@@ -38,6 +38,8 @@ interface FormState {
 export default function NewSale() {
   const { toast } = useToast();
   const [products, setProducts] = useState<{ id: string; name: string; sku?: string; costPerUnit?: number }[]>([]);
+  const [services, setServices] = useState<{ id: string; name: string; serviceCharge: number }[]>([]);
+  const [items, setItems] = useState<LineItem[]>([]);
   const [staff, setStaff] = useState<{ id: string; name: string }[]>([]);
   const [form, setForm] = useState<FormState>({
     productId: '',
@@ -56,6 +58,7 @@ export default function NewSale() {
 
   useEffect(() => {
     productRepository.getAll().then(setProducts).catch(() => setProducts([]));
+    serviceRepository.getAll().then(setServices).catch(() => setServices([]));
     setStaff(dataManager.getAllStaff());
   }, []);
 
