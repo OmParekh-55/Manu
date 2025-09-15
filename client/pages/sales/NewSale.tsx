@@ -279,30 +279,6 @@ export default function NewSale() {
             <CardDescription>Fill out the details to generate invoice</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>Product</Label>
-              <Select value={form.productId} onValueChange={onProductChange}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select finished product" />
-                </SelectTrigger>
-                <SelectContent>
-                  {products.map(p => (
-                    <SelectItem key={p.id} value={p.id}>{p.name}{p.sku ? ` (${p.sku})` : ''}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Quantity</Label>
-                <Input type="number" min={1} value={form.quantity} onChange={e => setForm(prev => ({ ...prev, quantity: Number(e.target.value) }))} />
-              </div>
-              <div>
-                <Label>Selling price per unit</Label>
-                <Input type="number" min={0} step={0.01} value={form.unitPrice} onChange={e => setForm(prev => ({ ...prev, unitPrice: Number(e.target.value) }))} />
-              </div>
-            </div>
 
             <div className="space-y-2">
               <Label>Add Product</Label>
