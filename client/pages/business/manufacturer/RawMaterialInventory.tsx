@@ -38,7 +38,7 @@ export default function RawMaterialInventory() {
       <BackButton />
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Raw Material Inventory</h1>
-        <Button onClick={() => setOpen(true)}>Add Inventory Item</Button>
+        <Button onClick={() => { setTab('raw'); setOpen(true); }}>Add Inventory Item</Button>
       </div>
 
       <Card>
