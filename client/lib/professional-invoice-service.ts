@@ -751,9 +751,23 @@ export class ProfessionalInvoiceService {
       // Import Document Vault service
       const { documentVaultService } = await import('./document-vault-service');
 
-      // Convert blob to base64
-      const arrayBuffer = await pdfBlob.arrayBuffer();
-      const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+      // Convert blob to base64 safely without overflowing the call stack
+      const blobToBase64 = (blob: Blob) => new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          try {
+            const dataUrl = String(reader.result || '');
+            const base64 = dataUrl.includes(',') ? dataUrl.split(',')[1] : dataUrl;
+            resolve(base64);
+          } catch (e) {
+            reject(e);
+          }
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+
+      const base64 = await blobToBase64(pdfBlob);
 
       const documentData = {
         type: 'invoice' as const,
@@ -788,7 +802,11 @@ export class ProfessionalInvoiceService {
         }
       };
 
-      const documentId = await documentVaultService.addDocument(documentData);
+      const addRes = documentVaultService.addDocument(documentData);
+      if (!addRes.success || !addRes.document) {
+        throw new Error(addRes.message || 'Failed to add document');
+      }
+      const documentId = addRes.document.id;
 
       console.log(`Invoice ${invoiceData.invoiceNumber} stored to Document Vault with ID: ${documentId}`);
       return documentId;
