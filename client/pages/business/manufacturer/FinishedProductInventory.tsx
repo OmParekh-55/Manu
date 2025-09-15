@@ -13,7 +13,7 @@ import { formatCurrency } from '@/lib/business-data';
 
 export default function FinishedProductInventory() {
   const [open, setOpen] = useState(false);
-  const [tab, setTab] = useState<'finished'|'raw'>(() => (sessionStorage.getItem('inventory_add_tab') as any) || 'finished');
+  const [tab, setTab] = useState<'finished'|'raw'>('finished');
   const [list, setList] = useState<Product[]>([]);
   const [editing, setEditing] = useState<Record<string, Product>>({});
   const [search, setSearch] = useState('');
@@ -38,7 +38,7 @@ export default function FinishedProductInventory() {
       <BackButton />
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Finished Product Inventory</h1>
-        <Button onClick={() => setOpen(true)}>Add Inventory Item</Button>
+        <Button onClick={() => { setTab('finished'); setOpen(true); }}>Add Inventory Item</Button>
       </div>
 
       <Card>
