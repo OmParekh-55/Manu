@@ -86,6 +86,20 @@ export default function NewSale() {
     }));
   };
 
+  const addServiceItem = () => {
+    if (!form.serviceId) return;
+    const svc = services.find(s => s.id === form.serviceId);
+    if (!svc) return;
+    const qty = Math.max(1, Number(form.serviceQty || 1));
+    const price = Number(form.serviceUnitPrice ?? svc.serviceCharge ?? 0);
+    setItems(prev => [...prev, { id: svc.id, type: 'service', name: svc.name, quantity: qty, unitPrice: price }]);
+    setForm(prev => ({ ...prev, serviceId: '', serviceQty: 1, serviceUnitPrice: price }));
+  };
+
+  const removeItem = (idx: number) => {
+    setItems(prev => prev.filter((_,i)=>i!==idx));
+  };
+
   const nextInvoiceNumber = () => {
     const y = new Date();
     const key = 'invoice_seq_' + y.getFullYear() + String(y.getMonth() + 1).padStart(2, '0');
