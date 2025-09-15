@@ -13,7 +13,7 @@ import { formatCurrency } from '@/lib/business-data';
 
 export default function RawMaterialInventory() {
   const [open, setOpen] = useState(false);
-  const [tab, setTab] = useState<'finished'|'raw'>(() => (sessionStorage.getItem('inventory_add_tab') as any) || 'finished');
+  const [tab, setTab] = useState<'finished'|'raw'>('raw');
   const [list, setList] = useState<RawMaterial[]>([]);
   const [editing, setEditing] = useState<Record<string, RawMaterial>>({});
   const [search, setSearch] = useState('');
