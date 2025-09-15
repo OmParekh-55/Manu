@@ -84,71 +84,7 @@ interface Filter {
   options?: { label: string; value: any }[];
 }
 
-const sampleProducts: Product[] = [
-  {
-    id: '1',
-    name: 'Wireless Bluetooth Headphones',
-    sku: 'WBH-001',
-    category: 'Electronics',
-    price: 2999,
-    stock: 45,
-    minStock: 10,
-    status: 'active',
-    lastUpdated: '2024-01-15',
-    tags: ['popular', 'wireless'],
-    starred: true,
-    notes: 'Best seller this month'
-  },
-  {
-    id: '2',
-    name: 'Cotton T-Shirt (Blue)',
-    sku: 'CT-BLU-M',
-    category: 'Clothing',
-    price: 599,
-    stock: 8,
-    minStock: 10,
-    status: 'active',
-    lastUpdated: '2024-01-14',
-    tags: ['clothing', 'cotton']
-  },
-  {
-    id: '3',
-    name: 'Stainless Steel Water Bottle',
-    sku: 'SSWB-500',
-    category: 'Home & Garden',
-    price: 899,
-    stock: 0,
-    minStock: 5,
-    status: 'out_of_stock',
-    lastUpdated: '2024-01-13',
-    tags: ['eco-friendly', 'steel']
-  },
-  {
-    id: '4',
-    name: 'Organic Green Tea (50 bags)',
-    sku: 'OGT-50B',
-    category: 'Food & Beverages',
-    price: 349,
-    stock: 22,
-    minStock: 15,
-    status: 'active',
-    lastUpdated: '2024-01-12',
-    tags: ['organic', 'tea'],
-    starred: true
-  },
-  {
-    id: '5',
-    name: 'LED Desk Lamp',
-    sku: 'LED-DL-001',
-    category: 'Electronics',
-    price: 1299,
-    stock: 3,
-    minStock: 8,
-    status: 'active',
-    lastUpdated: '2024-01-11',
-    tags: ['led', 'office']
-  }
-];
+const sampleProducts: Product[] = [];
 
 export default function InventoryEnhanced() {
   const permissions = usePermissions();
