@@ -47,14 +47,15 @@ export default function NewSale() {
   const [form, setForm] = useState<FormState>({
     productId: '',
     productLabel: '',
-    quantity: 1,
-    unitPrice: 0,
+    productQty: 1,
+    productUnitPrice: 0,
     taxRate: 0,
-    paymentMode: '',
-    paymentStatus: '',
+    paymentMode: 'Cash',
+    paymentStatus: 'Paid',
     customerPhone: '',
     customerName: '',
     salespersonId: '',
+    commissionRatePct: 0,
     description: ''
   });
   const [submitting, setSubmitting] = useState(false);
