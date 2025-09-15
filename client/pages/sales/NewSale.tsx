@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { saleInvoiceRepository } from '@/services/indexeddb/repositories/saleInvoiceRepository';
 import { toBePaidRepository } from '@/services/indexeddb/repositories/toBePaidRepository';
 import { productRepository } from '@/services/indexeddb/repositories/productRepository';
+import { serviceRepository } from '@/services/indexeddb/repositories/serviceRepository';
 import { dataManager } from '@/lib/data-manager';
 import { professionalInvoiceService } from '@/lib/professional-invoice-service';
 import { authService } from '@/lib/auth-service';
