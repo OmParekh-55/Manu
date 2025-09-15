@@ -137,18 +137,18 @@ export default function NewSale() {
     try {
       const record: any = {
         invoiceDate: new Date().toISOString(),
-        productId: form.productId,
-        quantity: form.quantity,
-        sellingPricePerUnit: form.unitPrice,
         paymentMode: form.paymentMode || 'Cash',
         customerNumber: form.customerPhone,
         customerName: form.customerName || '',
         paymentStatus: 'Pending',
+        subtotal,
+        taxRate: form.taxRate,
         totalAmount: total,
         status: 'draft',
-        taxRate: form.taxRate,
         salespersonId: form.salespersonId,
-        description: form.description
+        commissionRatePct: form.commissionRatePct || 0,
+        description: form.description,
+        lineItems: items
       };
       await saleInvoiceRepository.add(record);
       toast({ title: 'Draft saved' });
