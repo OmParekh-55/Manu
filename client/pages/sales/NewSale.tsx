@@ -290,6 +290,36 @@ export default function NewSale() {
               </div>
             </div>
 
+            <div className="space-y-2">
+              <Label>Add Service</Label>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                <Select value={form.serviceId} onValueChange={v => setForm(prev => ({ ...prev, serviceId: v }))}>
+                  <SelectTrigger className="md:col-span-2"><SelectValue placeholder="Select service" /></SelectTrigger>
+                  <SelectContent>
+                    {services.map(s => (
+                      <SelectItem key={s.id} value={s.id}>{s.name} (₹{(s.serviceCharge||0).toFixed(2)})</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Input type="number" min={1} placeholder="Qty" value={form.serviceQty || 1} onChange={e => setForm(prev => ({ ...prev, serviceQty: Number(e.target.value) }))} />
+                <Input type="number" min={0} step={0.01} placeholder="Unit price" value={form.serviceUnitPrice || 0} onChange={e => setForm(prev => ({ ...prev, serviceUnitPrice: Number(e.target.value) }))} />
+              </div>
+              <div>
+                <Button type="button" variant="outline" onClick={addServiceItem}>Add Service</Button>
+              </div>
+              {items.filter(i=>i.type==='service').length > 0 && (
+                <div className="space-y-2">
+                  <Label>Services in this sale</Label>
+                  {items.filter(i=>i.type==='service').map((i,idx)=> (
+                    <div key={idx} className="flex items-center justify-between p-2 border rounded">
+                      <span className="text-sm">{i.name} • Qty {i.quantity} × ₹{i.unitPrice.toFixed(2)}</span>
+                      <Button size="sm" variant="ghost" onClick={()=>removeItem(idx)}>Remove</Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
             <div>
               <Label>Tax rate</Label>
               <Select value={String(form.taxRate)} onValueChange={v => setForm(prev => ({ ...prev, taxRate: Number(v) }))}>
